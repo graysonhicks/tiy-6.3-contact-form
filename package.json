@@ -24,12 +24,14 @@
     "onchange": "^2.0.0",
     "jquery": "^2.2.0",
     "underscore": "^1.8.3",
-    "handlebars": "^4.0.0"
+    "handlebars": "^4.0.5",
+    "browserify-handlebars": "^1.0.0",
+    "backbone": "^1.3.1"
   },
   "scripts": {
     "html": "cp app/*.html dist/",
 
-    "sass": "sass --style compressed --update app/styles:dist/css",
+    "scss": "sass --style compressed --update app/styles:dist/css",
     "autoprefixer": "postcss -u autoprefixer -r dist/css/*.css",
 
     "lint": "eslint app/scripts",
@@ -38,26 +40,28 @@
     "imagemin": "imagemin app/images dist/images -p",
     "favicon": "cp app/favicon.ico dist/",
 
-    "build:css": "npm run sass && npm run autoprefixer",
+    "build:css": "npm run scss && npm run autoprefixer",
     "build:js": "npm run lint && npm run browserify",
     "build:images": "npm run imagemin && npm run favicon",
     "build": "npm run html && npm run build:css && npm run build:js && npm run build:images",
 
     "deploy": "npm run build && git-directory-deploy --directory dist/",
 
-    "watch:sass": "sass --watch app/styles:dist/css",
-
+    "watch:scss": "sass --watch app/styles:dist/css",
     "watch:js": "watchify app/scripts/index.js -o dist/js/bundle.js",
     "watch:html": "npm run html && onchange 'app/**/*.html' -- npm run html",
-    "server": "live-server --open='dist'",
-    "watch": "parallelshell 'npm run watch:html' 'npm run watch:sass' 'npm run watch:js' 'npm run server'"
+    "server": "live-server --browser='Google Chrome.app' --port='9001' --open='dist'",
+    "watch": "parallelshell 'npm run watch:html' 'npm run watch:scss' 'npm run watch:js' 'npm run server'"
   },
   "browserify": {
-    "transform": [ "browserify-shim", "strictify" ]
+    "transform": [ "browserify-shim", "browserify-handlebars", "strictify" ]
   },
   "browserify-shim": {
     "jQuery": "$",
     "underscore": "_",
-    "handlebars": "handlebars"
+    "Handlebars": "handlebars"
+  },
+  "strictify":{
+      "exclude": [".handlebars", "json"]
   }
 }
