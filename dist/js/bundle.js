@@ -49,14 +49,19 @@ var ContactFormView = Backbone.View.extend({
   tagName: "form",
   className: "contact-form form-horizontal",
   events: {
+    "submit .contact-form": "formSubmission"
   },
   initialize: function() {
-
     $('.contact-form-container').html(this.$el.html(formTem({})));
 
   },
   render: function() {
-
+    $('.contact-form-container').html(this.$el.html(formTem({})));
+  },
+  formSubmission: function(event){
+    event.preventDefault();
+    var contactData = $(this).serializeArray();
+    console.log(contactData);
   }
 });
 
