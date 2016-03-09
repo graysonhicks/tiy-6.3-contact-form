@@ -3,7 +3,10 @@
 var $ = require('jquery');
 var Backbone = require('backbone');
 var handlebars = require('handlebars');
-
+var dummyinfo = [
+  { "first-name": "Dale", "last-name": "Fenton", "email":"test@test.com", "phone": "867-5309", "twitter": "@soso", "linked-in":"hire me" },
+  { "first-name": "Grayson", "last-name": "Hicks", "email":"test@test.com", "phone": "867-5309", "twitter": "@soso", "linked-in":"hire me"}
+];
 
 //==============================================================================
 //                        Templates
@@ -17,7 +20,9 @@ var contactsTem = require('../templates/contactlist.handlebars');
 
 
 var ContactModel = Backbone.Model.extend({
-
+  initialize: function(){
+    // this.name = (config.name || '' );
+  }
 });
 
 var ContactCollection = Backbone.Collection.extend({
@@ -25,6 +30,7 @@ var ContactCollection = Backbone.Collection.extend({
    }
 );
 
+// $('.contact-list').html( contactsTem( contacts.toJSON() ) );
 //==============================================================================
 //                        Views
 //==============================================================================
@@ -38,10 +44,10 @@ var ContactListItemView = Backbone.View.extend({
     // "click .contact-list-items.delete": "destroy"
   },
   initialize: function() {
-    // $('.contact-form').html(formTem({}));
+    this.render();
   },
   render: function() {
-
+    $('.contact-list').html( contactsTem( this.collection.toJSON() ) );
   }
 });
 
@@ -52,8 +58,7 @@ var ContactFormView = Backbone.View.extend({
     "submit .contact-form": "formSubmission"
   },
   initialize: function() {
-    $('.contact-form-container').html(this.$el.html(formTem({})));
-
+    this.render();
   },
   render: function() {
     $('.contact-form-container').html(this.$el.html(formTem({})));
@@ -66,16 +71,36 @@ var ContactFormView = Backbone.View.extend({
 });
 
 var formView = new ContactFormView();
+var contacts = new ContactCollection( dummyinfo );
+var contactView = new ContactListItemView( { collection: contacts });
 
 },{"../templates/contactlist.handlebars":2,"../templates/formtemplate.handlebars":3,"backbone":5,"handlebars":35,"jquery":48}],2:[function(require,module,exports){
 "use strict";
-var templater = require("handlebars/runtime")["default"].template;module.exports = templater({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<!DOCTYPE html>\n";
+var templater = require("handlebars/runtime")["default"].template;module.exports = templater({"1":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return "  <li>\n"
+    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},depth0,{"name":"each","hash":{},"fn":container.program(2, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "  </li>\n";
+},"2":function(container,depth0,helpers,partials,data) {
+    var helper, alias1=container.escapeExpression;
+
+  return "    "
+    + alias1(((helper = (helper = helpers.key || (data && data.key)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"key","hash":{},"data":data}) : helper)))
+    + " : "
+    + alias1(container.lambda(depth0, depth0))
+    + " ||\n";
+},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+    var stack1;
+
+  return "<!DOCTYPE html>\n<ul>\n"
+    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},depth0,{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+    + "</ul>\n";
 },"useData":true});
 },{"handlebars/runtime":47}],3:[function(require,module,exports){
 "use strict";
 var templater = require("handlebars/runtime")["default"].template;module.exports = templater({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-    return "<!DOCTYPE html>\n\n  <div class=\"form-group\">\n    <label for=\"first-name\" class=\"col-sm-2 control-label\">Email</label>\n    <div class=\"col-sm-10\">\n      <input type=\"text\" class=\"form-control\" id=\"first-name\" placeholder=\"First Name\">\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <label for=\"last-name\" class=\"col-sm-2 control-label\">Last Name</label>\n    <div class=\"col-sm-10\">\n      <input type=\"text\" class=\"form-control\" id=\"last-name\" placeholder=\"Last Name\">\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <label for=\"email\" class=\"col-sm-2 control-label\">Email</label>\n    <div class=\"col-sm-10\">\n      <input type=\"email\" class=\"form-control\" id=\"email\" placeholder=\"Email\">\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <label for=\"phone\" class=\"col-sm-2 control-label\">Phone Number</label>\n    <div class=\"col-sm-10\">\n      <input type=\"tel\" class=\"form-control\" id=\"phone\" placeholder=\"Phone Number\">\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <label for=\"twitter\" class=\"col-sm-2 control-label\">Twitter</label>\n    <div class=\"col-sm-10\">\n      <input type=\"text\" class=\"form-control\" id=\"twitter\" placeholder=\"Twitter Username\">\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <label for=\"linked-in\" class=\"col-sm-2 control-label\">LinkedIn</label>\n    <div class=\"col-sm-10\">\n      <input type=\"text\" class=\"form-control\" id=\"linked-in\" placeholder=\"LinkedIn Username\">\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <div class=\"col-sm-offset-2 col-sm-10\">\n      <button type=\"submit\" class=\"btn btn-default pull-right add-contact-button\">Add Contact</button>\n    </div>\n  </div>\n\n";
+    return "<!DOCTYPE html>\n\n  <div class=\"form-group\">\n    <label for=\"first-name\" class=\"col-sm-2 control-label\">Email</label>\n    <div class=\"col-sm-10\">\n      <input type=\"text\" class=\"form-control\" id=\"first-name\" name=\"first-name\" placeholder=\"First Name\">\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <label for=\"last-name\" class=\"col-sm-2 control-label\">Last Name</label>\n    <div class=\"col-sm-10\">\n      <input type=\"text\" class=\"form-control\" id=\"last-name\" name=\"last-name\" placeholder=\"Last Name\">\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <label for=\"email\" class=\"col-sm-2 control-label\">Email</label>\n    <div class=\"col-sm-10\">\n      <input type=\"email\" class=\"form-control\" id=\"email\" name=\"email\" placeholder=\"Email\">\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <label for=\"phone\" class=\"col-sm-2 control-label\">Phone Number</label>\n    <div class=\"col-sm-10\">\n      <input type=\"tel\" class=\"form-control\" id=\"phone\" name=\"phone\" placeholder=\"Phone Number\">\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <label for=\"twitter\" class=\"col-sm-2 control-label\">Twitter</label>\n    <div class=\"col-sm-10\">\n      <input type=\"text\" class=\"form-control\" id=\"twitter\" name=\"twitter\" placeholder=\"Twitter Username\">\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <label for=\"linked-in\" class=\"col-sm-2 control-label\">LinkedIn</label>\n    <div class=\"col-sm-10\">\n      <input type=\"text\" class=\"form-control\" id=\"linked-in\" name=\"linked-in\" placeholder=\"LinkedIn Username\">\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <div class=\"col-sm-offset-2 col-sm-10\">\n      <button type=\"submit\" class=\"btn btn-default pull-right add-contact-button\">Add Contact</button>\n    </div>\n  </div>\n\n";
 },"useData":true});
 },{"handlebars/runtime":47}],4:[function(require,module,exports){
 (function (process,__filename){
