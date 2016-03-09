@@ -5820,7 +5820,22 @@ img {
 .contact-form-container {
   padding-top: 25px; }
 
-.contact-list {
+.contact-input-containers {
+  margin-bottom: 10px; }
+  .contact-input-containers label.control-label {
+    text-align: left;
+    padding-left: 0px; }
+    .contact-input-containers label.control-label .fa-mobile {
+      font-size: 20px; }
+
+.contact-list-container {
+  text-align: center;
   border-top: 4px solid #222; }
+
+.add-contact-button-container {
+  text-align: right; }
+
+#contact-search-input {
+  width: 650px; }
 
 /*# sourceMappingURL=app.css.map */
