@@ -1,7 +1,10 @@
 var $ = require('jquery');
 var Backbone = require('backbone');
 var handlebars = require('handlebars');
-
+var dummyinfo = [
+  { "first-name": "Dale", "last-name": "Fenton", "email":"test@test.com", "phone": "867-5309", "twitter": "@soso", "linked-in":"hire me" },
+  { "first-name": "Grayson", "last-name": "Hicks", "email":"test@test.com", "phone": "867-5309", "twitter": "@soso", "linked-in":"hire me"}
+];
 
 //==============================================================================
 //                        Templates
@@ -14,14 +17,19 @@ var contactsTem = require('../templates/contactlist.handlebars');
 //==============================================================================
 
 
-var ContactModel = Backbone.Model.extend({
 
+var ContactModel = Backbone.Model.extend({
+  initialize: function(){
+    // this.name = (config.name || '' );
+  }
 });
+
 
 var ContactCollection = Backbone.Collection.extend({
   model: ContactModel,
    }
 );
+
 
 //==============================================================================
 //                        Views
@@ -36,10 +44,10 @@ var ContactListItemView = Backbone.View.extend({
     // "click .contact-list-items.delete": "destroy"
   },
   initialize: function() {
-    // $('.contact-form').html(formTem({}));
+    this.render();
   },
   render: function() {
-
+    $('.contact-list').html( contactsTem( this.collection.toJSON() ) );
   }
 });
 
@@ -50,8 +58,7 @@ var ContactFormView = Backbone.View.extend({
     "submit .contact-form": "formSubmission"
   },
   initialize: function() {
-    $('.contact-form-container').html(this.$el.html(formTem({})));
-
+    this.render();
   },
   render: function() {
     $('.contact-form-container').html(this.$el.html(formTem({})));
@@ -64,3 +71,5 @@ var ContactFormView = Backbone.View.extend({
 });
 
 var formView = new ContactFormView();
+var contacts = new ContactCollection( dummyinfo );
+var contactView = new ContactListItemView( { collection: contacts });
