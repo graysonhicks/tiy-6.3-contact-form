@@ -17,18 +17,20 @@ var contactsTem = require('../templates/contactlist.handlebars');
 //==============================================================================
 
 
+
 var ContactModel = Backbone.Model.extend({
   initialize: function(){
     // this.name = (config.name || '' );
   }
 });
 
+
 var ContactCollection = Backbone.Collection.extend({
   model: ContactModel,
    }
 );
 
-// $('.contact-list').html( contactsTem( contacts.toJSON() ) );
+
 //==============================================================================
 //                        Views
 //==============================================================================
