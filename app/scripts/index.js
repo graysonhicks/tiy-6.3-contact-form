@@ -15,7 +15,13 @@ var searchTem = require('../templates/search.handlebars');
 //==============================================================================
 
 var ContactModel = Backbone.Model.extend({
-  idAttribute: '_id'
+  idAttribute: '_id',
+  defaults: { show: true },
+  toJSON: function(){
+    return _.omit( _.clone(this.attributes), ['_id', 'show'] );
+  },
+  initialize: function(){
+  }
 });
 
 
@@ -83,6 +89,9 @@ var ContactView = Backbone.View.extend({
     "click .submit-contact-edit": "submit-edit",
     "submit": "do-edit-contact"
   },
+  initialize: function(){
+    this.listenTo(this.model, 'change:show', this.filter );
+  },
   "close-edit": function(event){
     event.preventDefault();
     this.render();
@@ -105,19 +114,23 @@ var ContactView = Backbone.View.extend({
     this.remove();
   },
   "edit-contact": function(){
-    var atts = _.clone(this.model.attributes);
-    delete atts._id;
-    atts.edit = 'true';
-    this.$el.html( this.template( atts ));
+    this.model.set({'edit': 'true'});
+    this.model.unset('filler');
+    this.$el.html( this.template( this.model.toJSON() ));
   },
-  hide: function(){
+  filter: function(model, showVal){
     console.log('inside hide function');
+    if(showVal){
+      this.render();
+    }else{
+      this.$el.html('');
+      return this;
+    }
   },
   render: function( ){
-    var atts = _.clone(this.model.attributes);
-    delete atts._id;
-    atts.filler = 'true';
-    this.$el.html( this.template( atts ) );
+    this.model.unset('edit');
+    this.model.set({'filler': true});
+    this.$el.html( this.template( this.model.toJSON() ) );
     return this;
   }
 });
@@ -135,22 +148,21 @@ var SearchView = Backbone.View.extend({
       var models = this.collection.filter( function(contact){
         var atts = contact.omit( '_id');
         var valid = false;
-        // console.log(contact);
         $.each(atts, function(prop, obj, index){
-          if(obj.indexOf(searchTerm) > -1){
+          // console.log(obj);
+          if(obj.toString().toLowerCase().indexOf(searchTerm.toLowerCase()) > -1){
             valid = true;
           }
         });
-        return valid;
+        return !valid;
       });
       console.log(models);
-      console.log(this.collection);
-      var model = this.collection.get(models[0]);
-      console.log(model);
-      // model.hide();
-
-      //this is an instance of a model object, why can't we call a method on it?
-      // model.hide();
+      this.collection.each( function(index, obj){
+        index.set({'show': true});
+      });
+      $.each(models, function( prop, obj){
+        obj.set({ 'show': false });
+      });
     },
     initialize: function(){
       this.render();
