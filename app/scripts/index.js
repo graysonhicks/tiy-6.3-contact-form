@@ -15,7 +15,6 @@ var searchTem = require('../templates/search.handlebars');
 //==============================================================================
 
 var ContactModel = Backbone.Model.extend({
-<<<<<<< HEAD
   idAttribute: '_id',
   defaults: { show: true },
   toJSON: function(){
@@ -23,11 +22,6 @@ var ContactModel = Backbone.Model.extend({
   },
   initialize: function(){
   }
-=======
-
-  idAttribute: '_id'
-
->>>>>>> upstream/master
 });
 
 
@@ -70,14 +64,6 @@ var ContactListItemView = Backbone.View.extend({
   className: "table table-striped table-hover contact-table",
   template: contactsTem,
   events: {
-<<<<<<< HEAD
-    // "add this.collection": "render",
-    // "destroy this.collection": "render"
-=======
-    "add this.collection": "render",
-    "click this": "render",
-    "destroy this.collection": "render"
->>>>>>> upstream/master
   },
   initialize: function() {
     this.listenTo(this.collection, 'add', this.renderChild );
