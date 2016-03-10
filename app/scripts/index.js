@@ -15,6 +15,7 @@ var searchTem = require('../templates/search.handlebars');
 //==============================================================================
 
 var ContactModel = Backbone.Model.extend({
+<<<<<<< HEAD
   idAttribute: '_id',
   defaults: { show: true },
   toJSON: function(){
@@ -22,6 +23,11 @@ var ContactModel = Backbone.Model.extend({
   },
   initialize: function(){
   }
+=======
+
+  idAttribute: '_id'
+
+>>>>>>> upstream/master
 });
 
 
@@ -58,12 +64,20 @@ var ContactFormView = Backbone.View.extend({
 });
 
 var ContactListItemView = Backbone.View.extend({
+
   tagName: "div",
+
   className: "table table-striped table-hover contact-table",
   template: contactsTem,
   events: {
+<<<<<<< HEAD
     // "add this.collection": "render",
     // "destroy this.collection": "render"
+=======
+    "add this.collection": "render",
+    "click this": "render",
+    "destroy this.collection": "render"
+>>>>>>> upstream/master
   },
   initialize: function() {
     this.listenTo(this.collection, 'add', this.renderChild );
@@ -75,6 +89,17 @@ var ContactListItemView = Backbone.View.extend({
   render: function() {
     this.$el.html( this.template( {} ) );
     return this;
+
+    // $('.contact-table-container').html( this.template( this.collection.toJSON() ) );
+    // this.listenTo(this.collection, 'add', this.render);
+    // this.listenTo(this.el, 'click', this.clear );
+    // this.listenTo(this.model, 'destroy', this.remove);
+
+  },
+  delete: function(event){
+    event.preventDefault();
+    this.model.destroy();
+
   }
 });
 
