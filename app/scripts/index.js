@@ -130,7 +130,7 @@ var ContactView = Backbone.View.extend({
     this.$el.html( this.template( this.model.toJSON() ));
   },
   filter: function(model, showVal){
-    console.log('inside hide function');
+    // console.log('inside hide function');
     if(showVal){
       this.render();
     }else{
@@ -167,7 +167,7 @@ var SearchView = Backbone.View.extend({
         });
         return !valid;
       });
-      console.log(models);
+      // console.log(models);
       this.collection.each( function(index, obj){
         index.set({'show': true});
       });
