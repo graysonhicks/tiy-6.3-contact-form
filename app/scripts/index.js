@@ -1,10 +1,6 @@
 var $ = require('jquery');
 var Backbone = require('backbone');
 var handlebars = require('handlebars');
-var dummyinfo = [
-  { "first-name": "Dale", "last-name": "Fenton", "email":"test@test.com", "phone": "867-5309", "twitter": "@soso", "linked-in":"hire me" },
-  { "first-name": "Grayson", "last-name": "Hicks", "email":"test@test.com", "phone": "867-5309", "twitter": "@soso", "linked-in":"hire me"}
-];
 
 //==============================================================================
 //                        Templates
@@ -17,7 +13,6 @@ var contactTem = require('../templates/contact.handlebars');
 //==============================================================================
 
 var ContactModel = Backbone.Model.extend({
-
 });
 
 
@@ -57,12 +52,12 @@ var ContactCollection = Backbone.Collection.extend({
 // ==============================================================================
 
 var ContactListItemView = Backbone.View.extend({
-  el: '.contact-table-container',
   tagName: "table",
   className: "table table-striped table-hover contact-table",
   template: contactsTem,
   events: {
     "add this.collection": "render",
+    "click this": "render",
     "destroy this.collection": "render"
   },
   initialize: function() {
@@ -83,6 +78,10 @@ var ContactListItemView = Backbone.View.extend({
     // this.listenTo(this.el, 'click', this.clear );
     // this.listenTo(this.model, 'destroy', this.remove);
 
+  },
+  delete: function(event){
+    event.preventDefault();
+    this.model.destroy();
   }
 });
 
