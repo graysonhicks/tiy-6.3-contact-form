@@ -1,4 +1,5 @@
 var $ = require('jquery');
+var _ = require('underscore');
 var Backbone = require('backbone');
 var handlebars = require('handlebars');
 var dummyinfo = [
@@ -24,7 +25,7 @@ var contactTem = require('../templates/contact.handlebars');
 // };
 
 var ContactModel = Backbone.Model.extend({
-
+  idAttribute: '_id'
 });
 
 
@@ -32,39 +33,13 @@ var ContactCollection = Backbone.Collection.extend({
   model: ContactModel,
   url: 'http://tiny-lasagna-server.herokuapp.com/collections/pizzaContacts'
 });
-//
-// var ContactView = Backbone.View.extend({
-//   el: ".contact-table-container",
-//
-//   events: {
-//     "click this.el": "delete"
-//   },
-//
-//   render: function(){
-//     console.log(this.collection);
-//     $(this.el).html( contactsTem( this.collection.toJSON() ) );
-//   },
-//
-//   delete: function(e){
-//     e.preventDefault();
-//     console.log(this);
-//   }
-//
-// });
-// var collection = new ContactCollection();
-// collection.fetch().done(function(){
-//   console.log(collection);
-//   var view = new ContactView( { collection: collection });
-//   view.render();
-// });
-
 
 // ==============================================================================
 //                        Views
 // ==============================================================================
 
 var ContactListItemView = Backbone.View.extend({
-  tagName: "table",
+  tagName: "div",
   className: "table table-striped table-hover contact-table",
   template: contactsTem,
   events: {
@@ -72,46 +47,67 @@ var ContactListItemView = Backbone.View.extend({
     "click this": "clear",
     "destroy this.collection": "render"
   },
-  clear: function(event){
-    console.log(event);
-  },
   initialize: function() {
     this.listenTo(this.collection, 'add', this.render );
     this.render();
   },
   render: function() {
-    console.log(this.template({}));
     $('.contact-table-container').html(this.$el.html( this.template( {} ) ) );
     this.collection.each(function(contact){
-      console.log(contact);
       var contactView = new ContactView({ model: contact });
-      this.$el.find('tbody').append( contactView.render().el );
+      this.$el.find('.list-holder').append( contactView.render().el );
     }, this );
     return this;
-    // $('.contact-table-container').html( this.template( this.collection.toJSON() ) );
-    // this.listenTo(this.collection, 'add', this.render);
-    // this.listenTo(this.el, 'click', this.clear );
-    // this.listenTo(this.model, 'destroy', this.remove);
   },
   delete: function(event) {
       event.preventDefault();
-      console.log('delete');
 			this.model.destroy();
 		}
 });
 
 var ContactView = Backbone.View.extend({
-  tagName: "tr",
+  tagName: "div",
+  className: "contact-holder",
   template: contactTem,
   events: {
-    "click .delete-contact": "delete-contact"
+    "click .delete-contact": "delete-contact",
+    "click .edit-contact": "edit-contact",
+    "click .cancel-edit": "close-edit",
+    "click .submit-contact-edit": "submit-edit",
+    "submit": "do-edit-contact"
+  },
+  "close-edit": function(event){
+    event.preventDefault();
+    this.render();
+  },
+  "do-edit-contact": function(event){
+    event.preventDefault();
+    var contactData = $(event.target).serializeArray();
+    var update = {};
+    $.each(contactData, function(index, prop){
+      update[ prop.name ] = prop.value;
+    });
+    this.model.save( update );
+    this.render();
+  },
+  "submit-edit": function(event){
+    this.$el.find(".contact-edit").trigger('submit');
   },
   "delete-contact": function(){
     this.model.destroy();
     this.remove();
   },
-  render: function(){
-    this.$el.html( this.template( this.model.toJSON() ) );
+  "edit-contact": function(){
+    var atts = _.clone(this.model.attributes);
+    delete atts._id;
+    atts.edit = 'true';
+    this.$el.html( this.template( atts ));
+  },
+  render: function( ){
+    var atts = _.clone(this.model.attributes);
+    delete atts._id;
+    atts.filler = 'true';
+    this.$el.html( this.template( atts ) );
     return this;
   }
 });
@@ -134,10 +130,8 @@ var ContactFormView = Backbone.View.extend({
       acum[i.name] = i.value;
       return acum;
     }, {});
-    console.log(contactData);
     this.collection.create(contactData);
     this.render();
-    console.log(this.collection);
   }
 });
 
@@ -149,6 +143,4 @@ var contacts = new ContactCollection();
 contacts.fetch().done(function(){
   var formView = new ContactFormView( { collection: contacts });
   var contactView = new ContactListItemView( { collection: contacts });
-
-  console.log(contactView.$el);
 });
