@@ -13,6 +13,7 @@ var dummyinfo = [
 var formTem = require('../templates/formtemplate.handlebars');
 var contactsTem = require('../templates/contactlist.handlebars');
 var contactTem = require('../templates/contact.handlebars');
+var searchTem = require('../templates/search.handlebars');
 //==============================================================================
 //                        Models
 //==============================================================================
@@ -91,6 +92,9 @@ var ContactView = Backbone.View.extend({
     atts.edit = 'true';
     this.$el.html( this.template( atts ));
   },
+  hide: function(){
+    this.remove();
+  },
   render: function( ){
     var atts = _.clone(this.model.attributes);
     delete atts._id;
@@ -98,6 +102,44 @@ var ContactView = Backbone.View.extend({
     this.$el.html( this.template( atts ) );
     return this;
   }
+});
+
+var SearchView = Backbone.View.extend({
+    tagName: "form",
+    id: "contacts-search",
+    className: "navbar-form navbar-center",
+    role: "search",
+    events: {
+      "keyup input": "filter"
+    },
+    filter: function(event){
+      console.log(event.currentTarget.value);
+      console.log(this.collection);
+      var searchTerm = event.currentTarget.value;
+      this.collection.each( function(contact){
+        var atts = contact.omit( '_id');
+        var valid = false;
+        console.log(contact);
+        $.each(atts, function(prop, obj, index){
+          if(obj.indexOf(searchTerm) > -1){
+            valid = true;
+          }
+        });
+        if(valid){
+          // now set the model to hidden
+          // contact.hide();
+        }
+        // return valid;
+      });
+      // console.log(filteredColl);
+      // contactView.collection = filteredColl;
+    },
+    initialize: function(){
+      this.render();
+    } ,
+    render: function(){
+      this.$el.html( searchTem( { } ));
+    }
 });
 
 var ContactFormView = Backbone.View.extend({
@@ -131,4 +173,5 @@ var contacts = new ContactCollection();
 contacts.fetch().done(function(){
   var formView = new ContactFormView( { collection: contacts });
   var contactView = new ContactListItemView( { collection: contacts });
+  var searchView = new SearchView( { el: $('#contacts-search'), collection: contacts });
 });
