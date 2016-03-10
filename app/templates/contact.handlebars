@@ -1,7 +1,10 @@
 <!DOCTYPE html>
+{{!-- build a form if we are editing --}}
 {{#if edit}}
 <form>
 {{/if}}
+
+{{!-- loop through our key / value pairs and set them to the page or as inputs --}}
 {{#each this}}
   {{#unless @last}}
     {{#if ../edit}}
@@ -11,11 +14,11 @@
     {{/if}}
   {{/unless}}
 {{/each}}
-{{#if edit}}
 
+{{!-- output the correct button types at the end --}}
+{{#if edit}}
   <button class="edit-delete-buttons cancel-edit"><i class="fa fa-times"></i></button>
   <button class="edit-delete-buttons submit-contact-edit" type="submit" ><i class="fa fa-pencil-square-o"></i></button>
-
 </form>
 {{else}}
   <td>

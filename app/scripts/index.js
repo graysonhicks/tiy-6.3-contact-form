@@ -17,13 +17,6 @@ var contactTem = require('../templates/contact.handlebars');
 //                        Models
 //==============================================================================
 
-// $.fn.serializeObject = function() {
-//   return this.serializeArray().reduce(function(acum, i) {
-//     acum[i.name] = i.value;
-//     return acum;
-//   }, {});
-// };
-
 var ContactModel = Backbone.Model.extend({
   idAttribute: '_id'
 });
@@ -44,7 +37,6 @@ var ContactListItemView = Backbone.View.extend({
   template: contactsTem,
   events: {
     "add this.collection": "render",
-    "click this": "clear",
     "destroy this.collection": "render"
   },
   initialize: function() {
@@ -58,11 +50,7 @@ var ContactListItemView = Backbone.View.extend({
       this.$el.find('.list-holder').append( contactView.render().el );
     }, this );
     return this;
-  },
-  delete: function(event) {
-      event.preventDefault();
-			this.model.destroy();
-		}
+  }
 });
 
 var ContactView = Backbone.View.extend({
