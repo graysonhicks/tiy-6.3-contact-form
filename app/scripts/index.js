@@ -40,7 +40,7 @@ var ContactListItemView = Backbone.View.extend({
   className: "table table-striped table-hover contact-table",
   events: {
     "add this.collection": "render",
-    "click": "clear"
+    "click .delete": "clear"
     // "click .contact-list-items": "open",
     // "click .contact-list-items.edit": "openEditDialog",
     // "click .contact-list-items.delete": "destroy"
@@ -55,6 +55,8 @@ var ContactListItemView = Backbone.View.extend({
   },
   clear: function(event) {
     event.preventDefault();
+    console.log('event', event);
+    console.log(this);
     console.log('delete');
 		}
 });
