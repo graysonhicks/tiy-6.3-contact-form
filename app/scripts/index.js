@@ -16,13 +16,6 @@ var contactsTem = require('../templates/contactlist.handlebars');
 //                        Models
 //==============================================================================
 
-$.fn.serializeObject = function() {
-  return this.serializeArray().reduce(function(acum, i) {
-    acum[i.name] = i.value;
-    return acum;
-  }, {});
-};
-
 var ContactModel = Backbone.Model.extend({
   initialize: function(){
     // this.name = (config.name || '' );
@@ -42,11 +35,12 @@ var ContactCollection = Backbone.Collection.extend({
 //==============================================================================
 
 var ContactListItemView = Backbone.View.extend({
+  el: '.contact-table-container',
   tagName: "table",
   className: "table table-striped table-hover contact-table",
   events: {
     "add this.collection": "render",
-    "click td": "delete"
+    "click": "clear"
     // "click .contact-list-items": "open",
     // "click .contact-list-items.edit": "openEditDialog",
     // "click .contact-list-items.delete": "destroy"
@@ -55,14 +49,13 @@ var ContactListItemView = Backbone.View.extend({
     this.render();
   },
   render: function() {
-    $('.contact-table-container').html(contactsTem( this.collection.toJSON()));
+    $(this.el).html(contactsTem( this.collection.toJSON()));
     this.listenTo(this.collection, 'add', this.render);
-    this.listenTo(this.model, 'destroy', this.remove);
+    this.delegateEvents();
   },
-  delete: function(event) {
-      event.preventDefault();
-      console.log('delete');
-			this.model.destroy();
+  clear: function(event) {
+    event.preventDefault();
+    console.log('delete');
 		}
 });
 
