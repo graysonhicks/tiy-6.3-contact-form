@@ -2,10 +2,6 @@ var $ = require('jquery');
 var _ = require('underscore');
 var Backbone = require('backbone');
 var handlebars = require('handlebars');
-var dummyinfo = [
-  { "first-name": "Dale", "last-name": "Fenton", "email":"test@test.com", "phone": "867-5309", "twitter": "@soso", "linked-in":"hire me" },
-  { "first-name": "Grayson", "last-name": "Hicks", "email":"test@test.com", "phone": "867-5309", "twitter": "@soso", "linked-in":"hire me"}
-];
 
 //==============================================================================
 //                        Templates
@@ -31,25 +27,47 @@ var ContactCollection = Backbone.Collection.extend({
 // ==============================================================================
 //                        Views
 // ==============================================================================
+var ContactFormView = Backbone.View.extend({
+  tagName: "form",
+  className: "contact-form form-horizontal",
+  events: {
+    "submit": "formSubmission"
+  },
+  initialize: function() {
+    this.render();
+  },
+  render: function() {
+    this.$el.html(formTem({}));
+    return this;
+  },
+  formSubmission: function(event){
+    event.preventDefault();
+    var contactData = this.$el.serializeArray().reduce(function(acum, i) {
+      acum[i.name] = i.value;
+      return acum;
+    }, {});
+    this.collection.create(contactData);
+    this.render();
+  }
+});
 
 var ContactListItemView = Backbone.View.extend({
   tagName: "div",
   className: "table table-striped table-hover contact-table",
   template: contactsTem,
   events: {
-    "add this.collection": "render",
-    "destroy this.collection": "render"
+    // "add this.collection": "render",
+    // "destroy this.collection": "render"
   },
   initialize: function() {
-    this.listenTo(this.collection, 'add', this.render );
-    this.render();
+    this.listenTo(this.collection, 'add', this.renderChild );
+  },
+  renderChild: function(contact){
+    var newChildView = new ContactView({ model: contact});
+    this.$el.find('.list-holder').append( newChildView.render().el );
   },
   render: function() {
-    $('.contact-table-container').html(this.$el.html( this.template( {} ) ) );
-    this.collection.each(function(contact){
-      var contactView = new ContactView({ model: contact });
-      this.$el.find('.list-holder').append( contactView.render().el );
-    }, this );
+    this.$el.html( this.template( {} ) );
     return this;
   }
 });
@@ -93,7 +111,7 @@ var ContactView = Backbone.View.extend({
     this.$el.html( this.template( atts ));
   },
   hide: function(){
-    this.remove();
+    console.log('inside hide function');
   },
   render: function( ){
     var atts = _.clone(this.model.attributes);
@@ -113,65 +131,57 @@ var SearchView = Backbone.View.extend({
       "keyup input": "filter"
     },
     filter: function(event){
-      console.log(event.currentTarget.value);
-      console.log(this.collection);
       var searchTerm = event.currentTarget.value;
-      this.collection.each( function(contact){
+      var models = this.collection.filter( function(contact){
         var atts = contact.omit( '_id');
         var valid = false;
-        console.log(contact);
+        // console.log(contact);
         $.each(atts, function(prop, obj, index){
           if(obj.indexOf(searchTerm) > -1){
             valid = true;
           }
         });
-        if(valid){
-          // now set the model to hidden
-          // contact.hide();
-        }
-        // return valid;
+        return valid;
       });
-      // console.log(filteredColl);
-      // contactView.collection = filteredColl;
+      console.log(models);
+      console.log(this.collection);
+      var model = this.collection.get(models[0]);
+      console.log(model);
+      // model.hide();
+
+      //this is an instance of a model object, why can't we call a method on it?
+      // model.hide();
     },
     initialize: function(){
       this.render();
     } ,
     render: function(){
       this.$el.html( searchTem( { } ));
+      return this;
     }
 });
 
-var ContactFormView = Backbone.View.extend({
-  tagName: "form",
-  className: "contact-form form-horizontal",
-  events: {
-    "submit": "formSubmission"
-  },
-  initialize: function() {
-    this.render();
-  },
-  render: function() {
-    $('.contact-form-container').html(this.$el.html(formTem({})));
-  },
-  formSubmission: function(event){
-    event.preventDefault();
-    var contactData = this.$el.serializeArray().reduce(function(acum, i) {
-      acum[i.name] = i.value;
-      return acum;
-    }, {});
-    this.collection.create(contactData);
-    this.render();
-  }
-});
+
 
 //==============================================================================
 //                       Execution
 //==============================================================================
 
+//instantiate a new collection
 var contacts = new ContactCollection();
+
+//insert Main Input Form Into Page
+var formView = new ContactFormView( { collection: contacts });
+$('.contact-form-container').html(formView.render().el);
+
+//insert Contact List Holder
+var contactView = new ContactListItemView( { collection: contacts });
+$('.contact-table-container').html(contactView.render().el);
+
+//insert Search / Filter Bar
+var searchView = new SearchView( { collection: contacts });
+$('.contact-list-container').prepend( searchView.render().el );
+
+//fetch contacts from tiny-lasagna-server
 contacts.fetch().done(function(){
-  var formView = new ContactFormView( { collection: contacts });
-  var contactView = new ContactListItemView( { collection: contacts });
-  var searchView = new SearchView( { el: $('#contacts-search'), collection: contacts });
 });
