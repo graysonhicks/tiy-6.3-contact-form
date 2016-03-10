@@ -45,7 +45,8 @@ var ContactListItemView = Backbone.View.extend({
   tagName: "table",
   className: "table table-striped table-hover contact-table",
   events: {
-    "add this.collection": "render"
+    "add this.collection": "render",
+    "click td": "delete"
     // "click .contact-list-items": "open",
     // "click .contact-list-items.edit": "openEditDialog",
     // "click .contact-list-items.delete": "destroy"
@@ -54,11 +55,15 @@ var ContactListItemView = Backbone.View.extend({
     this.render();
   },
   render: function() {
-    console.log('render');
-
     $('.contact-table-container').html(contactsTem( this.collection.toJSON()));
     this.listenTo(this.collection, 'add', this.render);
-  }
+    this.listenTo(this.model, 'destroy', this.remove);
+  },
+  delete: function(event) {
+      event.preventDefault();
+      console.log('delete');
+			this.model.destroy();
+		}
 });
 
 var ContactFormView = Backbone.View.extend({
