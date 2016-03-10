@@ -37,19 +37,32 @@ img
 #contact-search-input
   width: 650px
 
+.search-button
+  padding-bottom: 7px
+
 .contact-table
   td
     text-align: left
 
 #table-heading
   text-align: center
+  border: 1px solid #ccc
+  font-size: 16px
+  padding: 10px 16px
+  margin-top: 8px
+  margin-bottom: 12px
+  display: inline-block
+  border-radius: 6px
 
 .edit-delete-buttons
   padding-left: 8px
-  color: #222
+  border-radius: 6px
+  color: #333
+  background-color: #e6e6e6
+  border: 1px solid #adadad
+  margin-bottom: 4px
   i
     font-size: 18px
-.edit-delete-buttons
   width: 4%
   &:not(:last-of-type)
     margin-right: 2%
@@ -69,8 +82,23 @@ a.edit-delete-buttons.delete
 .contact-holder
   width: 100%
   text-align: left
+  margin-bottom: 5px
+  border-bottom: 1px solid #ccc
 
 .contact-edit-input
   width: 12%
   display: inline-block
   margin-right: 2%
+
+.editing-contacts-form
+  .contact-edit-input
+    border: 1px solid #ccc
+    border-radius: 6px
+    padding-top: 2px
+    padding-left: 4px
+    padding-bottom: 2px
+
+
+
+.contact-holder-heading
+  font-weight: bold
